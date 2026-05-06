@@ -68,7 +68,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,12 +88,6 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 load_dotenv()
 
-"""DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}"""
 
 DATABASES = {
     'default': dj_database_url.parse(
@@ -168,7 +162,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'satatic',
+    BASE_DIR / 'static',
 ]
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1000000 # 1MB

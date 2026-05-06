@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Logs / local data
+*.log
+.coverage
+coverage.xml
+htmlcov/
+
+# Test / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+*.cover
+*.py,cover
+*.mo
+*.pot
+
+#Folders
+site_teste/
+
+# IDEs
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+api_de_games.postman_collection.json
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+*.sqlite3
+
+# Django collected/static & uploads (adjust if you version these)
+staticfiles/
+media/
+
+# Environment variables / secrets
+.env
+.env.*
+
+.env

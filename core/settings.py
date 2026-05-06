@@ -167,4 +167,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'satatic',
+]
+
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1000000 # 1MB

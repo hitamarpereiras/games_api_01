@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from players.models import Player
 from players.serializers import RegisterSerializer, PlayerSerializer
@@ -16,10 +16,12 @@ from services.supabase_svc import delete_image
 
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
+    parser_classes = [MultiPartParser, FormParser]
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        parser_classes = [MultiPartParser, FormParser]
 
         UserService.register_player(serializer.validated_data)
 

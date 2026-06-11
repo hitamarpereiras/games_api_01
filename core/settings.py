@@ -19,6 +19,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "gamesearch-nine.vercel.app",
+    "spacegames.vps8317.panel.icontainer.cloud",
     "localhost",
     "127.0.0.1",
     ]

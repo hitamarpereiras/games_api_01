@@ -12,7 +12,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 class GameRequirementViewSet(ModelViewSet):
     queryset = Requirement.objects.all().order_by('created_at')
     serializer_class = GameRequirementSerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['game']
 

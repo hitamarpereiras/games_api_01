@@ -20,9 +20,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "gamesearch-nine.vercel.app",
     "spacegames.vps8317.panel.icontainer.cloud",
-    "localhost",
     "127.0.0.1",
-    "216.22.27.187:5000",
+    "216.22.27.187",
     ]
 
 CORS_ALLOW_ALL_ORIGINS = True

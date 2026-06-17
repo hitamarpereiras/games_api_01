@@ -1,241 +1,688 @@
-﻿# API de Games (Django + DRF)
+# 🎮 API de Gerenciamento de Jogos
 
-API REST para cadastro/consulta de jogos, categorias, requisitos e perfil de player, com autenticação JWT (SimpleJWT) e upload de imagens via Supabase Storage.
+Uma API RESTful completa para gerenciamento de jogos, jogadores e requisitos de hardware, desenvolvida com **Django REST Framework**.
 
-## Stack
+---
 
-- Django + Django REST Framework
-- JWT: `djangorestframework-simplejwt`
-- Filtros: `django-filter`
-- Ordenação/pesquisa: DRF `OrderingFilter` / `SearchFilter`
-- Upload/resize de imagens: `Pillow` + Supabase Storage
-- Banco: PostgreSQL via `dj-database-url` (`DTB_URL`)
+## 📋 Sumário
 
-## Como rodar (dev)
+- [Visão Geral](#visão-geral)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Autenticação](#autenticação)
+- [Módulos da API](#módulos-da-api)
+- [Endpoints Principais](#endpoints-principais)
+- [Serviços Disponíveis](#serviços-disponíveis)
+- [Configurações](#configurações)
 
-1) Criar venv e instalar dependências:
+---
+
+## 👁️ Visão Geral
+
+Este projeto é uma **API REST** que oferece funcionalidades completas para:
+
+✅ **Autenticação** - Login e gerenciamento de usuários  
+✅ **Gerenciamento de Jogos** - CRUD de jogos com categorias e requisitos  
+✅ **Perfis de Jogadores** - Armazenar especificações de hardware do jogador  
+✅ **Avaliações** - Sistema de reviews e pontuação de jogos  
+✅ **Requisitos de Sistema** - Definir requisitos mínimos e recomendados  
+✅ **Armazenamento em Nuvem** - Upload de imagens via Supabase  
+✅ **Filtros e Busca** - Busca avançada de jogos
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+```
+📦 Core
+├── Django 6.0
+├── Django REST Framework
+├── djangorestframework-simplejwt (JWT Authentication)
+└── django-cors-headers (CORS)
+
+📦 Banco de Dados
+├── PostgreSQL
+└── dj-database-url
+
+📦 Utilitários
+├── Pillow (Processamento de Imagens)
+├── python-dotenv (Variáveis de Ambiente)
+├── django-filter (Filtros avançados)
+└── Supabase (Armazenamento em Nuvem)
+```
+
+Veja [requirements.txt](requirements.txt) para a lista completa de dependências.
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+api_de_games/
+│
+├── 🔐 authentication/          # Módulo de autenticação
+│   ├── views.py               # Endpoints de auth
+│   ├── urls.py                # Rotas de autenticação
+│   ├── admin.py               # Admin do Django
+│   └── migrations/            # Migrações do banco
+│
+├── 👾 games/                  # Módulo principal de jogos
+│   ├── models.py              # Modelo: Game
+│   ├── serializers.py         # Serialização de dados
+│   ├── views.py               # ViewSets para jogos
+│   ├── urls.py                # Rotas de jogos
+│   ├── pagination.py          # Paginação de resultados
+│   └── migrations/            # Migrações do banco
+│
+├── 🎯 categories/             # Categorias de jogos
+│   ├── models.py              # Modelo: Category
+│   ├── serializers.py         # Serialização
+│   ├── views.py               # ViewSets
+│   └── urls.py                # Rotas
+│
+├── 👤 players/                # Perfis de jogadores
+│   ├── models.py              # Modelo: Player (hardware specs)
+│   ├── serializers.py         # Serialização
+│   ├── views.py               # ViewSets
+│   └── urls.py                # Rotas
+│
+├── ⭐ reviews/                # Avaliações de jogos
+│   ├── models.py              # Modelo: Review
+│   ├── serializers.py         # Serialização
+│   ├── views.py               # ViewSets
+│   └── urls.py                # Rotas
+│
+├── 📊 game_requirements/      # Requisitos de sistema
+│   ├── models.py              # Modelo: GameRequirement
+│   ├── serializers.py         # Serialização
+│   ├── views.py               # ViewSets
+│   └── urls.py                # Rotas
+│
+├── 🔧 services/               # Serviços utilitários
+│   ├── pillow_svc.py         # Processamento de imagens
+│   ├── supabase_svc.py       # Upload em nuvem
+│   ├── users_svc.py          # Gerenciamento de usuários
+│   └── validators.py         # Validações customizadas
+│
+├── ⚙️ core/                   # Configurações principais
+│   ├── settings.py            # Configurações Django
+│   ├── urls.py                # Rotas principais
+│   ├── wsgi.py                # WSGI application
+│   └── asgi.py                # ASGI application
+│
+├── 📄 manage.py               # CLI Django
+├── 📦 requirements.txt         # Dependências Python
+└── 📋 README.md               # Este arquivo
+
+```
+
+---
+
+## 🚀 Instalação e Configuração
+
+### 1️⃣ Pré-requisitos
+
+- Python 3.8+
+- PostgreSQL
+- Git
+
+### 2️⃣ Clonar o Repositório
 
 ```bash
+git clone <repository-url>
+cd api_de_games
+```
+
+### 3️⃣ Criar Ambiente Virtual
+
+```bash
+# Windows
 python -m venv venv
-.\venv\Scripts\activate
+venv\Scripts\activate
+
+# Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 4️⃣ Instalar Dependências
+
+```bash
 pip install -r requirements.txt
 ```
 
-2) Configurar variáveis de ambiente (ver seção abaixo).
+### 5️⃣ Configurar Variáveis de Ambiente
 
-3) Migrar e subir o servidor:
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+# Banco de Dados
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/api_games
+
+# Django
+DEBUG=True
+SECRET_KEY=sua-chave-secreta-aqui
+
+# Supabase (para upload de imagens)
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_KEY=sua-chave-api-aqui
+SUPABASE_BUCKET=seu-bucket-aqui
+
+# JWT
+JWT_SECRET=sua-chave-jwt-aqui
+```
+
+### 6️⃣ Migrar o Banco de Dados
 
 ```bash
 python manage.py migrate
+```
+
+### 7️⃣ Criar Superusuário
+
+```bash
+python manage.py createsuperuser
+```
+
+### 8️⃣ Executar o Servidor
+
+```bash
 python manage.py runserver
 ```
 
-Base URL (produção): `http://gamesapiv1.vps8317.panel.icontainer.cloud/`
+O servidor estará disponível em: `http://127.0.0.1:8000/`
 
-Base URL (local): `http://127.0.0.1:8000/`
+---
 
-Prefixo da API: `/api/`
+## 🔐 Autenticação
 
-Admin Django: `/` (o projeto está com `admin.site.urls` mapeado na raiz).
+### Tipos de Autenticação
 
-## Variáveis de ambiente
+A API utiliza **JWT (JSON Web Token)** para autenticação segura.
 
-Crie um arquivo `.env` (ou exporte no ambiente) com:
+### Fluxo de Autenticação
 
-```env
-# Banco (obrigatório)
-DTB_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
-
-# Supabase Storage (obrigatório para endpoints com upload de imagem)
-SUPABASE_URL=...
-SUPABASE_KEY=...
+```
+1. Usuário faz login com credenciais
+   ↓
+2. API retorna Access Token e Refresh Token
+   ↓
+3. Incluir Access Token no header: Authorization: Bearer <token>
+   ↓
+4. Quando expirar, usar Refresh Token para obter novo Access Token
 ```
 
-Observações:
+### Headers Necessários
 
-- Sem `DTB_URL`, o projeto falha ao iniciar (o `dj_database_url.parse(...)` recebe `None`).
-- O `core/settings.py` força SSL no banco (`ssl_require=True` / `sslmode=require`).
-- `SUPABASE_URL`/`SUPABASE_KEY` são importados em `services/supabase_svc.py`; sem eles a aplicação falha ao iniciar com erro “Supabase não configurado”.
-
-Buckets usados:
-
-- `users_avatars` (avatar do player)
-- `covers_games` (capa do jogo)
-
-## Autenticação (JWT)
-
-A API usa `Authorization: Bearer <access_token>`.
-
-- Obter token (login): `POST /api/authentication/token/`
-- Verificar token: `POST /api/authentication/token/verify/`
-
-Exemplo (obter token) em PowerShell:
-
-```powershell
-curl.exe -X POST "http://gamesapiv1.vps8317.panel.icontainer.cloud/api/authentication/token/" `
-  -H "Content-Type: application/json" `
-  -d '{"username":"seu_usuario","password":"sua_senha"}'
+```http
+Authorization: Bearer <seu-access-token>
+Content-Type: application/json
 ```
 
-Resposta (exemplo):
+### Endpoints de Autenticação
 
-```json
-{ "refresh": "...", "access": "..." }
+```
+POST   /api/auth/login          # Fazer login
+POST   /api/auth/register       # Criar nova conta
+POST   /api/token/refresh       # Renovar token
+POST   /api/token/blacklist     # Fazer logout
 ```
 
-Observação: o endpoint de *refresh* não está exposto nas `urls.py` (mesmo o SimpleJWT retornando o `refresh` no login).
+---
 
-## Paginação
+## 🎮 Módulos da API
 
-Listagens usam paginação por número de página (DRF `PageNumberPagination`), com:
+### 1. 👾 **GAMES** - Gerenciamento de Jogos
 
-- `page` (padrão: 1)
-- `page_size` (padrão: 8, máximo: 32)
+#### Modelo: Game
 
-Formato de resposta padrão do DRF:
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `name` | String | Nome único do jogo |
+| `description` | Text | Descrição detalhada |
+| `category` | ManyToMany | Categorias do jogo |
+| `release_date` | Date | Data de lançamento |
+| `cover_url` | URL | URL da capa do jogo |
+| `cover_path` | String | Caminho local da imagem |
+| `score` | Float | Pontuação (0.0 - 10.0) |
+| `user` | FK | Usuário que adicionou |
+| `created_at` | DateTime | Data de criação |
+
+#### Endpoints Principais
+
+```
+GET    /api/games/                      # Listar todos os jogos
+POST   /api/games/                      # Criar novo jogo
+GET    /api/games/{id}/                 # Obter detalhes do jogo
+PUT    /api/games/{id}/                 # Atualizar jogo
+DELETE /api/games/{id}/                 # Deletar jogo
+```
+
+#### Filtros e Busca
+
+```
+GET /api/games/?search=mario            # Buscar por nome
+GET /api/games/?category=Ação           # Filtrar por categoria
+GET /api/games/?score__gte=8.0          # Jogos com score >= 8.0
+GET /api/games/?ordering=-created_at    # Ordenar por data (descendente)
+```
+
+---
+
+### 2. 🎯 **CATEGORIES** - Categorias
+
+#### Modelo: Category
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `name` | String | Nome único da categoria |
+| `description` | Text | Descrição da categoria |
+| `created_at` | DateTime | Data de criação |
+| `updated_at` | DateTime | Última atualização |
+
+#### Endpoints
+
+```
+GET    /api/categories/                 # Listar todas as categorias
+POST   /api/categories/                 # Criar categoria
+GET    /api/categories/{id}/            # Obter detalhes
+PUT    /api/categories/{id}/            # Atualizar
+DELETE /api/categories/{id}/            # Deletar
+```
+
+---
+
+### 3. 👤 **PLAYERS** - Perfis de Jogadores
+
+#### Modelo: Player (Especificações de Hardware)
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `user` | OneToOne | Usuário associado |
+| `processor` | String | CPU do jogador |
+| `memory_ram` | Integer | RAM em GB |
+| `disk` | String | Tipo: SSD/HDD |
+| `disk_space` | Integer | Espaço disponível |
+| `unit` | String | Unidade (GB/TB) |
+| `gpu_name` | String | Placa de vídeo |
+| `gpu_memory` | Integer | VRAM em GB |
+| `avatar_url` | URL | URL do avatar |
+| `avatar_path` | String | Caminho da imagem |
+
+#### Endpoints
+
+```
+GET    /api/players/                    # Listar jogadores
+POST   /api/players/                    # Criar perfil
+GET    /api/players/{id}/               # Obter perfil
+PUT    /api/players/{id}/               # Atualizar specs
+DELETE /api/players/{id}/               # Deletar
+```
+
+---
+
+### 4. ⭐ **REVIEWS** - Avaliações
+
+#### Modelo: Review
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `game` | FK | Jogo avaliado |
+| `username` | String | Nome do avaliador |
+| `rating` | Integer | Nota (1-5) |
+| `comment` | Text | Comentário |
+| `created_at` | DateTime | Data de criação |
+
+#### Endpoints
+
+```
+GET    /api/reviews/                    # Listar avaliações
+POST   /api/reviews/                    # Criar review
+GET    /api/reviews/{id}/               # Obter review
+PUT    /api/reviews/{id}/               # Atualizar
+DELETE /api/reviews/{id}/               # Deletar
+```
+
+---
+
+### 5. 📊 **GAME_REQUIREMENTS** - Requisitos de Sistema
+
+#### Modelo: GameRequirement
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `game` | FK | Jogo relacionado |
+| `minimum_cpu` | String | CPU mínima |
+| `minimum_ram` | Integer | RAM mínima (GB) |
+| `minimum_disk` | Integer | Disco mínimo (GB) |
+| `minimum_gpu` | String | GPU mínima |
+| `recommended_cpu` | String | CPU recomendada |
+| `recommended_ram` | Integer | RAM recomendada (GB) |
+| `recommended_disk` | Integer | Disco recomendado (GB) |
+| `recommended_gpu` | String | GPU recomendada |
+| `system` | String | SO (Windows/Linux/Mac) |
+
+#### Endpoints
+
+```
+GET    /api/requirements/                # Listar requisitos
+POST   /api/requirements/                # Criar requisito
+GET    /api/requirements/{id}/           # Obter requisito
+PUT    /api/requirements/{id}/           # Atualizar
+DELETE /api/requirements/{id}/           # Deletar
+```
+
+---
+
+## 📡 Endpoints Principais
+
+### Estrutura das Respostas
+
+#### ✅ Sucesso (200 OK)
 
 ```json
 {
-  "count": 123,
-  "next": "http://.../?page=2",
-  "previous": null,
-  "results": []
+  "id": 1,
+  "name": "The Witcher 3",
+  "description": "Um épico RPG...",
+  "score": 9.5,
+  "category": [1, 2],
+  "release_date": "2015-05-19",
+  "cover_url": "https://...",
+  "created_at": "2024-01-15T10:30:00Z"
 }
 ```
 
-## Filtros e ordenação
+#### ❌ Erro (400/401/404)
 
-Filtros (querystring) via `django-filter`:
-
-- Games: `GET /api/games/`
-  - `name__icontains=...`
-  - `category__name__icontains=...`
-  - `score=...`, `score__gte=...`, `score__lte=...`
-  - `release_date=YYYY-MM-DD`, `release_date__gte=...`, `release_date__lte=...`
-- Reviews: `GET /api/reviews/?game=<id>`
-- Requirements: `GET /api/requirements/?game=<id>`
-
-Ordenação via `OrderingFilter`:
-
-- `?ordering=created_at` (asc) / `?ordering=-created_at` (desc)
-
-## Endpoints
-
-### Authentication
-
-- `POST /api/authentication/token/`
-  - Body (JSON): `username`, `password`
-  - 200: `{ "refresh": "...", "access": "..." }`
-- `POST /api/authentication/token/verify/`
-  - Body (JSON): `token`
-  - 200: `{}` (token válido) / 401 (inválido/expirado)
-
-### Players
-
-- `POST /api/players/register/` (público)
-  - Cria `User` + `Player` (transação atômica).
-  - Body (`multipart/form-data` ou JSON):
-    - `username` (string), `password` (string)
-    - `processor` (string), `memory_ram` (int)
-    - `disk` (string), `disk_space` (int)
-    - `gpu_name` (string), `gpu_memory` (int)
-    - `image` (arquivo, opcional) — máx 1MB, deve ser uma imagem válida
-  - 201: `{"message":"Usuário criado com sucesso"}`
-
-- `GET /api/players/` (auth)
-  - Retorna apenas o(s) player(s) do usuário autenticado.
-- `GET /api/players/{id}/` (auth)
-- `PATCH /api/players/{id}/` (auth, `multipart/form-data` recomendado)
-  - Campos do perfil e/ou `image` (upload).
-  - Nota: no código atual, o `PATCH` assume que a imagem foi enviada (pode exigir ajuste no backend para atualizar sem `image`).
-- `DELETE /api/players/{id}/` (auth)
-
-Observação: o endpoint `POST /api/players/` existe por padrão do `ModelViewSet`, mas o fluxo recomendado para criação é `POST /api/players/register/`.
-
-### Categories (auth)
-
-- `GET /api/categories/`
-- `POST /api/categories/`
-  - Body (JSON): `name`, `description`
-- `GET /api/categories/{id}/`
-- `PATCH /api/categories/{id}/`
-- `DELETE /api/categories/{id}/`
-
-### Games
-
-Leitura é pública; escrita exige autenticação.
-
-- `GET /api/games/` (público)
-- `GET /api/games/{id}/` (público)
-- `POST /api/games/` (auth)
-  - Body (`multipart/form-data` recomendado):
-    - `name` (string)
-    - `category_ids` (lista de ids — o model é ManyToMany)
-    - `description` (string)
-    - `release_date` (YYYY-MM-DD, opcional)
-    - `score` (float)
-    - `image_cover` (arquivo) — máx 1MB
-  - 201: `{"message":"Criado com sucesso"}`
-- `PATCH /api/games/{id}/` (auth)
-  - Nota: no código atual, o `PATCH` com atualização sem `image_cover` pode exigir ajuste no backend.
-- `DELETE /api/games/{id}/` (auth)
-
-Observações:
-
-- `cover_url` é preenchida via upload no Supabase.
-- Para enviar múltiplas categorias em `multipart`, repita o campo `category_ids` (ex.: `-F "category_ids=1" -F "category_ids=2"`). Em JSON, envie como array (ex.: `"category_ids":[1,2]`).
-
-### Reviews
-
-Leitura é pública; escrita exige autenticação.
-
-- `GET /api/reviews/` (público) — suporta filtro `?game=<id>`
-- `GET /api/reviews/{id}/` (público)
-- `POST /api/reviews/` (auth)
-- `PATCH /api/reviews/{id}/` (auth)
-- `DELETE /api/reviews/{id}/` (auth)
-
-Observação: no código atual, `user` e `game` estão como `read_only` no serializer e o ViewSet não sobrescreve `perform_create`; criação/edição pode precisar de ajuste no backend para funcionar.
-
-### Requirements
-
-Leitura é pública; escrita exige autenticação.
-
-- `GET /api/requirements/` (público) — suporta filtro `?game=<id>`
-- `GET /api/requirements/{id}/` (público)
-- `POST /api/requirements/` (auth)
-- `PATCH /api/requirements/{id}/` (auth)
-- `DELETE /api/requirements/{id}/` (auth)
-
-Campos (JSON):
-
-- `game` (id)
-- `minimum_processor` (string), `minimum_ram` (int), `minimum_gpu` (string), `minimum_gpu_ram` (int)
-- `maximum_processor` (string), `maximum_ram` (int), `maximum_gpu` (string), `maximum_gpu_ram` (int)
-
-Observação: o model possui o campo `system`, mas ele não está exposto no serializer atual.
-
-## Exemplos rápidos (curl)
-
-### Criar categoria
-
-```powershell
-curl.exe -X POST "http://gamesapiv1.vps8317.panel.icontainer.cloud/api/categories/" `
-  -H "Authorization: Bearer <ACCESS_TOKEN>" `
-  -H "Content-Type: application/json" `
-  -d '{"name":"RPG","description":"Role-playing"}'
+```json
+{
+  "error": "Descrição do erro",
+  "status": 400,
+  "detail": "Detalhes adicionais"
+}
 ```
 
-### Criar jogo com capa (multipart) + múltiplas categorias
+### Exemplo de Requisição
 
-```powershell
-curl.exe -X POST "http://gamesapiv1.vps8317.panel.icontainer.cloud/api/games/" `
-  -H "Authorization: Bearer <ACCESS_TOKEN>" `
-  -F "name=Elden Ring" `
-  -F "category_ids=1" `
-  -F "category_ids=2" `
-  -F "description=..." `
-  -F "release_date=2022-02-25" `
-  -F "score=9.5" `
-  -F "image_cover=@capa.jpg"
+```bash
+# GET - Listar jogos com filtros
+curl -X GET "http://localhost:8000/api/games/?search=mario&category=Ação" \
+  -H "Authorization: Bearer seu_token"
+
+# POST - Criar novo jogo
+curl -X POST "http://localhost:8000/api/games/" \
+  -H "Authorization: Bearer seu_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "The Witcher 3",
+    "description": "Um épico RPG",
+    "score": 9.5,
+    "category": [1, 2]
+  }'
+
+# PUT - Atualizar jogo
+curl -X PUT "http://localhost:8000/api/games/1/" \
+  -H "Authorization: Bearer seu_token" \
+  -H "Content-Type: application/json" \
+  -d '{"score": 9.8}'
+
+# DELETE - Deletar jogo
+curl -X DELETE "http://localhost:8000/api/games/1/" \
+  -H "Authorization: Bearer seu_token"
 ```
+
+---
+
+## 🔧 Serviços Disponíveis
+
+### 1. 🖼️ **Pillow Service** (`services/pillow_svc.py`)
+
+Processamento e otimização de imagens.
+
+**Funcionalidades:**
+- ✅ Redimensionamento automático
+- ✅ Otimização de qualidade
+- ✅ Suporte a múltiplos formatos (JPG, PNG, WebP)
+
+**Uso:**
+```python
+from services.pillow_svc import process_image
+
+processed = process_image(
+    image_file,
+    max_width=1024,
+    max_height=1024,
+    quality=85
+)
+```
+
+---
+
+### 2. ☁️ **Supabase Service** (`services/supabase_svc.py`)
+
+Gerenciamento de armazenamento em nuvem.
+
+**Funcionalidades:**
+- ✅ Upload seguro de imagens
+- ✅ Exclusão de arquivos
+- ✅ Geração de URLs públicas
+
+**Uso:**
+```python
+from services.supabase_svc import upload_image, delete_image
+
+# Upload
+url = upload_image(file, bucket='covers')
+
+# Delete
+delete_image(file_path, bucket='covers')
+```
+
+---
+
+### 3. 👥 **Users Service** (`services/users_svc.py`)
+
+Gerenciamento de usuários.
+
+**Funcionalidades:**
+- ✅ Criar usuário
+- ✅ Atualizar perfil
+- ✅ Validar permissões
+
+---
+
+### 4. ✔️ **Validators** (`services/validators.py`)
+
+Validações customizadas.
+
+**Funcionalidades:**
+- ✅ Validação de imagens
+- ✅ Validação de campos
+- ✅ Validação de dados do jogo
+
+**Uso:**
+```python
+from services.validators import validate_image
+
+validate_image(file)  # Lança exceção se inválido
+```
+
+---
+
+## ⚙️ Configurações
+
+### 1. CORS
+
+```python
+# core/settings.py
+CORS_ALLOW_ALL_ORIGINS = True  # Desenvolvimento
+
+# Produção (restritivo):
+CORS_ALLOWED_ORIGINS = [
+    "https://seu-frontend.com",
+    "https://www.seu-frontend.com",
+]
+```
+
+### 2. Hosts Permitidos
+
+```python
+ALLOWED_HOSTS = [
+    "gamesearch-nine.vercel.app",
+    "spacegames.vps8317.panel.icontainer.cloud",
+    "127.0.0.1",
+    "216.22.27.187",
+]
+```
+
+### 3. Aplicações Instaladas
+
+```python
+INSTALLED_APPS = [
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'django_filters',
+    
+    'authentication',
+    'players',
+    'categories',
+    'games',
+    'reviews',
+    'game_requirements',
+]
+```
+
+### 4. Filtros REST Framework
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'games.pagination.GamePagination',
+    'PAGE_SIZE': 20,
+}
+```
+
+---
+
+## 🌐 URLs Principais
+
+| Caminho | Descrição |
+|---------|-----------|
+| `/` | Home da API |
+| `/admin/` | Painel administrativo |
+| `/api/auth/` | Endpoints de autenticação |
+| `/api/games/` | Endpoints de jogos |
+| `/api/categories/` | Endpoints de categorias |
+| `/api/players/` | Endpoints de jogadores |
+| `/api/reviews/` | Endpoints de reviews |
+| `/api/requirements/` | Endpoints de requisitos |
+
+---
+
+## 📊 Modelo de Dados (ER Diagram)
+
+```
+User (Django Auth)
+├── Player (1-1)
+│   ├── processor
+│   ├── memory_ram
+│   ├── gpu_name
+│   └── avatar_url
+│
+└── Game (1-N)
+    ├── name
+    ├── description
+    ├── score
+    ├── category (M-N) ──→ Category
+    ├── reviews (1-N) ──→ Review
+    └── requirements (1-1) ──→ GameRequirement
+
+Category
+├── name
+├── description
+└── games (M-N) ──→ Game
+
+Review
+├── game (FK)
+├── username
+├── rating
+└── comment
+
+GameRequirement
+├── game (1-1)
+├── minimum_*
+└── recommended_*
+```
+
+---
+
+## 🚨 Tratamento de Erros
+
+### Códigos de Status HTTP
+
+| Status | Significado |
+|--------|------------|
+| `200` | OK - Requisição bem-sucedida |
+| `201` | Created - Recurso criado |
+| `400` | Bad Request - Dados inválidos |
+| `401` | Unauthorized - Token inválido/expirado |
+| `403` | Forbidden - Sem permissão |
+| `404` | Not Found - Recurso não existe |
+| `500` | Server Error - Erro interno |
+
+### Exemplo de Erro
+
+```json
+{
+  "detail": "Token inválido ou expirado",
+  "code": "token_not_valid"
+}
+```
+
+---
+
+## 📦 Dependências Principais
+
+```txt
+Django==6.0
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.2
+django-cors-headers==4.3.0
+django-filter==23.4
+Pillow==10.0.0
+python-dotenv==1.0.0
+dj-database-url==2.1.0
+psycopg2-binary==2.9.9
+```
+
+---
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+---
+
+## 👨‍💻 Suporte
+
+Para dúvidas ou sugestões, abra uma issue no repositório.
+
+**Desenvolvido com ❤️**

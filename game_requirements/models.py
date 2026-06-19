@@ -46,6 +46,17 @@ class Requirement(models.Model):
         default=0, 
         verbose_name='Memória GPU Máxima'
     )
+    storage = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Armazenamento'
+    )
+    released_by = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name='Lançado por'
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Criado em',

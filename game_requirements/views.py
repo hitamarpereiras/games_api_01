@@ -13,7 +13,7 @@ class GameRequirementViewSet(ModelViewSet):
     queryset = Requirement.objects.all().order_by('created_at')
     serializer_class = GameRequirementSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['game']
+    filterset_fields = ['game', 'released_by']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:

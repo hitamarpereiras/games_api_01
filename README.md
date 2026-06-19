@@ -353,15 +353,24 @@ DELETE /api/reviews/{id}/               # Deletar
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
 | `game` | FK | Jogo relacionado |
-| `minimum_cpu` | String | CPU mínima |
-| `minimum_ram` | Integer | RAM mínima (GB) |
-| `minimum_disk` | Integer | Disco mínimo (GB) |
+| `system` | String | Sistema operacional |
+| `minimum_processor` | String | Processador mínimo |
+| `minimum_ram` | Integer | Memória RAM mínima (GB) |
 | `minimum_gpu` | String | GPU mínima |
-| `recommended_cpu` | String | CPU recomendada |
-| `recommended_ram` | Integer | RAM recomendada (GB) |
-| `recommended_disk` | Integer | Disco recomendado (GB) |
-| `recommended_gpu` | String | GPU recomendada |
-| `system` | String | SO (Windows/Linux/Mac) |
+| `minimum_gpu_ram` | Integer | Memória de GPU mínima (GB) |
+| `maximum_processor` | String | Processador recomendado/máximo |
+| `maximum_ram` | Integer | Memória RAM máxima/recomendada (GB) |
+| `maximum_gpu` | String | GPU máxima/recomendada |
+| `maximum_gpu_ram` | Integer | Memória de GPU máxima/recomendada (GB) |
+| `storage` | Integer | Espaço de armazenamento necessário (GB) |
+| `released_by` | String | Origem ou fornecedor do requisito |
+| `created_at` | DateTime | Data de criação |
+| `updated_at` | DateTime | Data de atualização |
+
+#### Permissões
+
+- `GET /api/requirements/` e `GET /api/requirements/{id}/` são públicos.
+- `POST`, `PUT` e `DELETE` exigem autenticação.
 
 #### Endpoints
 
@@ -369,8 +378,8 @@ DELETE /api/reviews/{id}/               # Deletar
 GET    /api/requirements/                # Listar requisitos
 POST   /api/requirements/                # Criar requisito
 GET    /api/requirements/{id}/           # Obter requisito
-PUT    /api/requirements/{id}/           # Atualizar
-DELETE /api/requirements/{id}/           # Deletar
+PUT    /api/requirements/{id}/           # Atualizar requisito
+DELETE /api/requirements/{id}/           # Deletar requisito
 ```
 
 ---

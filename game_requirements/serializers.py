@@ -8,6 +8,7 @@ class GameRequirementSerializer(ModelSerializer):
         fields = [
             'id',
             'game',
+            'system',
             'minimum_processor',
             'minimum_ram',
             'minimum_gpu',
@@ -16,6 +17,8 @@ class GameRequirementSerializer(ModelSerializer):
             'maximum_ram',
             'maximum_gpu',
             'maximum_gpu_ram',
+            'storage',
+            'released_by',
             'created_at',
             'updated_at'
         ]

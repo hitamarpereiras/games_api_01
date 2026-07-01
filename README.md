@@ -3,6 +3,12 @@
 Uma API RESTful completa para gerenciamento de jogos, jogadores e requisitos de hardware, desenvolvida com **Django REST Framework**.
 
 ---
+## Aplicação Web
+
+Acesse a aplicação em:
+https://space-games-six.vercel.app/
+
+---
 
 ## 📋 Sumário
 
@@ -17,6 +23,7 @@ Uma API RESTful completa para gerenciamento de jogos, jogadores e requisitos de 
 - [Configurações](#configurações)
 
 ---
+
 
 ## 👁️ Visão Geral
 

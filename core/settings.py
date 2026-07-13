@@ -18,6 +18,7 @@ SECRET_KEY = 'django-insecure---j%*cot)#tgdnj#n!%l47_k)geg!midh9k!0q(m1o$ck@bp7q
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "games-apifree.onrender.com",
     "gamesearch-nine.vercel.app",
     "spacegames.vps8317.panel.icontainer.cloud",
     "127.0.0.1",

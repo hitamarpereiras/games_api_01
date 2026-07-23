@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'games',
     'reviews',
     'game_requirements',
+    'processors',
 
 ]
 

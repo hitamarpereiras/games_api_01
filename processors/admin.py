@@ -3,7 +3,7 @@ from processors.models import Processor
 
 
 @admin.register(Processor)
-class ProcessorAdmin(admin.AdminSite):
+class ProcessorAdmin(admin.ModelAdmin):
     list_display= [
         'id',
         'manufacturer',

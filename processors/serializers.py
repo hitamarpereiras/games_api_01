@@ -5,7 +5,7 @@ from rest_framework import serializers
 class ProcessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Processor
-        fileds = [
+        fields = [
             'id',
             'manufacturer',
             'modelo',

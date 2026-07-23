@@ -9,8 +9,7 @@ class ProcessorAdmin(admin.ModelAdmin):
         'manufacturer',
         'modelo',
         'generation',
-        'yaer',
-        'creadted_at'
+        'yaer'
     ]
     search_fields= [
         'manufacturer',

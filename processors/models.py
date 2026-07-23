@@ -16,7 +16,6 @@ class Processor(models.Model):
     )
     year= models.IntegerField(
         default="2026",
-        max_length=4,
         verbose_name="Ano"
     )
     created_at = models.DateTimeField(

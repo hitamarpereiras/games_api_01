@@ -35,6 +35,7 @@ htmlcov/
 *.py,cover
 *.mo
 *.pot
+*.xlsx
 
 #Folders
 site_teste/

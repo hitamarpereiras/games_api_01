@@ -25,7 +25,7 @@ class GpuViewSets(ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [AllowAny()]
 
-        return [IsAuthenticated]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         if self.request.user.is_superuser:

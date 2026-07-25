@@ -6,14 +6,6 @@ class RequirementAdmin(admin.ModelAdmin):
     list_display = [
         'game',
         'system',
-        'minimum_processor',
-        'minimum_ram',
-        'minimum_gpu',
-        'minimum_gpu_ram',
-        'maximum_processor',
-        'maximum_ram',
-        'maximum_gpu',
-        'maximum_gpu_ram',
         'created_at',
     ]
     search_fields = ['game']

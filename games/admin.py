@@ -8,11 +8,8 @@ class GameAdmin(admin.ModelAdmin):
         'id',
         'name',
         'get_categories',
-        'description',
         'release_date',
-        'score',
         'created_at',
-        'updated_at',
     ]
     search_fields = [
         'name',

@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/', include('reviews.urls')),
     path('api/', include('game_requirements.urls')),
     path('api/', include('processors.urls')),
+    path('api/', include('gpus.urls')),
 ]

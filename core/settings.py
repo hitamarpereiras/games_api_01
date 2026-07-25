@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'reviews',
     'game_requirements',
     'processors',
+    'gpus',
 
 ]
 

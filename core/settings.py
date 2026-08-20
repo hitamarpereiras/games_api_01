@@ -19,6 +19,7 @@ SECRET_KEY = 'django-insecure---j%*cot)#tgdnj#n!%l47_k)geg!midh9k!0q(m1o$ck@bp7q
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "painel-adm-spacegames-9s4mi0opl-dev-tecbr.vercel.app"
     "games-apifree.onrender.com",
     "gamesearch-nine.vercel.app",
     "spacegames.vps8317.panel.icontainer.cloud",
